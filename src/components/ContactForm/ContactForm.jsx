@@ -1,64 +1,47 @@
-import { Formik, Field, ErrorMessage } from 'formik';
-import * as Yup from 'yup';
-import { Container, Label, Btn, Err } from './ContactForm.styled';
 import { useDispatch, useSelector } from 'react-redux';
-import { addContact } from '../../redux/contactsSlice';
+import { addContact } from 'redux/operations';
+import { selectContacts } from 'redux/selectors';
 import { nanoid } from 'nanoid';
-
-const SignupSchema = Yup.object().shape({
-  name: Yup.string()
-    .min(2, 'Too Short!')
-    .max(50, 'Too Long!')
-    .required('Required'),
-  number: Yup.string().min(2, 'Too Short!').required('Required'),
-});
+import { toast } from 'react-toastify';
+import { Form, Label, Input, Btn } from './ContactForm.styled';
 
 export const ContactForm = () => {
   const dispatch = useDispatch();
-  const contacts = useSelector(state => state.contacts.list);
+  const contacts = useSelector(selectContacts);
 
-  const handleSubmit = (values, { resetForm }) => {
-    const { name, number } = values;
+  const handleSubmit = event => {
+    event.preventDefault();
 
-    const newContact = {
+    const contact = {
       id: nanoid(),
-      name,
-      number,
+      name: event.currentTarget.elements.name.value,
+      number: event.currentTarget.elements.number.value,
     };
 
-    const isDuplicate = contacts.some(
-      contact => contact.name.toLowerCase() === name.toLowerCase()
+    const isExist = contacts.find(
+      ({ name }) => name.toLowerCase() === contact.name.toLowerCase()
     );
 
-    if (isDuplicate) {
-      alert('This name already exists. Please enter a different name.');
-      return;
+    if (isExist) {
+      return toast.warn(`${contact.name} is already in contacts.`);
     }
 
-    dispatch(addContact(newContact));
-    resetForm();
+    dispatch(addContact(contact));
+    event.currentTarget.reset();
   };
 
   return (
-    <Formik
-      initialValues={{
-        name: '',
-        number: '',
-      }}
-      validationSchema={SignupSchema}
-      onSubmit={handleSubmit}
-    >
-      <Container>
-        <Label htmlFor="Name">Name</Label>
-        <Field type="text" name="name" />
-        <ErrorMessage name="name" component={Err} />
+    <Form onSubmit={handleSubmit}>
+      <Label htmlFor={nanoid()}>
+        Name
+        <Input type="text" name="name" id={nanoid()} required />
+      </Label>
+      <Label htmlFor={nanoid()}>
+        Number
+        <Input type="tel" name="number" id={nanoid()} required />
+      </Label>
 
-        <Label htmlFor="Number">Number</Label>
-        <Field type="tel" name="number" />
-        <ErrorMessage name="number" component={Err} />
-
-        <Btn type="submit">Add contact</Btn>
-      </Container>
-    </Formik>
+      <Btn type="submit">Add contact</Btn>
+    </Form>
   );
 };

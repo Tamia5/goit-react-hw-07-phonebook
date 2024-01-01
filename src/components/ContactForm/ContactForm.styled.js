@@ -1,12 +1,11 @@
-import { Form } from 'formik';
 import styled from 'styled-components';
 
-export const Container = styled(Form)`
+export const Form = styled.form`
   border: 1px solid black;
   display: flex;
   flex-direction: column;
   padding: 20px;
-  width: fit-content;
+  width: 250px;
   gap: 10px;
   margin-top: 20px;
   margin-bottom: 20px;
@@ -15,7 +14,16 @@ export const Container = styled(Form)`
 export const Label = styled.label`
   display: flex;
   flex-direction: column;
+  gap: 6px;
+  font-size: 18px;
 `;
+export const Input = styled.input`
+  width: 200px;
+  min-height: 20px;
+  border: 1px solid #c4c4c4;
+  border-radius: 3px;
+`;
+
 export const Btn = styled.button`
   border: none;
   padding: 10px;
@@ -24,10 +32,5 @@ export const Btn = styled.button`
   background-color: #3480eb;
   color: #ffff;
   margin-top: 10px;
-`;
-
-export const Err = styled.div`
-  color: red;
-  font-size: 14px;
-  margin-top: 5px;
+  width: 120px;
 `;

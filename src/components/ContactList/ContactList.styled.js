@@ -1,19 +1,22 @@
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 
 export const List = styled.ul`
-  margin-top: 20px;
-  width: 300px;
   padding: 0px 20px;
 `;
 export const Item = styled.li`
+  width: 500px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 10px;
+  gap: 10px;
+  font-size: 17px;
+
+  &:not(:last-child) {
+    margin-bottom: 15px;
+  }
 `;
-export const Container = styled.div`
-  display: flex;
-  align-items: center;
+export const Text = styled.p`
+  display: inline-block;
+  min-width: 300px;
 `;
 export const Btn = styled.button`
   padding: 5px 10px;
@@ -21,6 +24,24 @@ export const Btn = styled.button`
   color: #fff;
   border: none;
 `;
-export const Name = styled.p`
-  margin-right: 10px;
+
+const spin = keyframes`
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+`;
+
+export const Spinner = styled.div`
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-top-color: #333;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  margin-bottom: 20px;
+  margin-left: 70px;
+
+  animation: ${spin} 1s ease-in-out infinite;
 `;

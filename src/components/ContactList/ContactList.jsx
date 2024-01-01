@@ -1,29 +1,48 @@
-import { Container, List, Item, Name, Btn } from './ContactList.styled';
-import { deleteContact } from '../../redux/contactsSlice';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import {
+  selectError,
+  selectFilteredContacts,
+  selectIsLoading,
+} from 'redux/selectors';
+import { fetchContacts, deleteContact } from 'redux/operations';
+import { List, Item, Text, Btn, Spinner } from './ContactList.styled';
 
-const ContactList = () => {
+export const ContactList = () => {
+  const filteredContacts = useSelector(selectFilteredContacts);
+  const isLoading = useSelector(selectIsLoading);
+  const error = useSelector(selectError);
   const dispatch = useDispatch();
-  const contacts = useSelector(state => state.contacts.list);
-  const filter = useSelector(state => state.filter);
 
-  const filteredContacts = contacts.filter(contact =>
-    contact.name.toLowerCase().includes(filter.toLowerCase())
-  );
+  useEffect(() => {
+    dispatch(fetchContacts());
+  }, [dispatch]);
+
+  const onDeleteContact = id => {
+    dispatch(deleteContact(id));
+  };
 
   return (
-    <List>
-      {filteredContacts.map(({ id, name, number }) => (
-        <Item key={id}>
-          <Container>
-            <Name>{name}:</Name>
-            <p>{number}</p>
-          </Container>
-          <Btn onClick={() => dispatch(deleteContact(id))}>Delete</Btn>
-        </Item>
-      ))}
-    </List>
+    <>
+      {isLoading && <Spinner />}
+
+      {!filteredContacts?.length && !error && !isLoading && (
+        <p>No contacts found.</p>
+      )}
+
+      {error && <p>{error}</p>}
+      <List>
+        {filteredContacts.map(({ id, name, phone }) => (
+          <Item key={id}>
+            <Text>
+              {name}: {phone}
+            </Text>
+            <Btn type="button" onClick={() => onDeleteContact(id)}>
+              Delete
+            </Btn>
+          </Item>
+        ))}
+      </List>
+    </>
   );
 };
-
-export default ContactList;
